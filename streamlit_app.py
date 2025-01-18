@@ -3,111 +3,131 @@ from inference_sdk import InferenceHTTPClient
 from PIL import Image
 import tempfile
 
-# Initialize the InferenceHTTPClient
+# Inisialisasi InferenceHTTPClient
 CLIENT = InferenceHTTPClient(
     api_url="https://classify.roboflow.com",
     api_key="m9qYjCzZlc0zYhxYaIpa"
 )
 
-# Scaled-down title for mobile-friendliness
+# Judul yang lebih kecil untuk kenyamanan di perangkat mobile
 st.markdown(
     """
-    <h3 style='text-align: center; font-size: 18px; margin-top: 0;'>
+    <h3 style='text-align: center; font-size: 22px; margin-top: 0; color: #4CAF50;'>
         Cek Nutrisi Selada
     </h3>
     """,
     unsafe_allow_html=True
 )
 
-# Instructions (left aligned)
+# Instruksi dengan ikon dan gaya teks
 st.write(
-    "<p style='text-align: left; font-size: 14px;'>📸 Upload gambar untuk cek kesehatan selada</p>",
+    "<p style='text-align: left; font-size: 16px; color: #555;'>📸 Unggah gambar untuk cek kesehatan selada</p>",
     unsafe_allow_html=True
 )
 st.write(
-    "<p style='text-align: left; font-size: 14px;'>✅ Pastikan hanya satu selada dalam satu frame gambar</p>",
+    "<p style='text-align: left; font-size: 16px; color: #555;'>✅ Pastikan hanya satu selada dalam satu frame gambar</p>",
     unsafe_allow_html=True
 )
 
-# Image input: Upload
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
+# Input gambar: Unggah
+uploaded_file = st.file_uploader("Pilih gambar...", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
 
 if uploaded_file:
-    # Process the uploaded file
+    # Proses file yang diunggah
     image = Image.open(uploaded_file)
 
-    # Display the image
-    st.image(image, caption="Selected Image", use_container_width=True)
+    # Tampilkan gambar
+    st.image(image, caption="Gambar yang Dipilih", use_container_width=True)
 
-    # Create a temporary file to save the image
+    # Buat file sementara untuk menyimpan gambar
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
         temp_file_name = temp_file.name
         image.save(temp_file, format="JPEG")
         temp_file.flush()
 
-        # Perform inference using the temporary image file
-        st.write("Classifying the health of the lettuce...")
+        # Lakukan inferensi menggunakan file gambar sementara
+        st.write("Menganalisis kesehatan selada...")
 
-        # Use the temporary file path in the inference
+        # Gunakan path file sementara dalam inferensi
         result = CLIENT.infer(temp_file_name, model_id="lettuce-health-classification/1")
 
-        # Display the result
+        # Tampilkan hasil
         if result:
-            st.markdown("<h4>Prediction Results:</h4>", unsafe_allow_html=True)
+            st.markdown("<h4 style='color: #4CAF50;'>Hasil Prediksi:</h4>", unsafe_allow_html=True)
             
-            # Display the top prediction
+            # Tampilkan prediksi teratas
             top_prediction = result["top"]
             confidence = result["confidence"]
             st.write(
-                f"**Top Class:** {top_prediction} with confidence of {confidence*100:.2f}%"
+                f"**Kelas Teratas:** {top_prediction} dengan kepercayaan {confidence*100:.2f}%"
             )
 
-            # Display detailed predictions
-            st.write("### All Predictions:")
+            # Tampilkan prediksi lengkap
+            st.write("### Semua Prediksi:")
             for prediction in result["predictions"]:
                 class_name = prediction["class"]
                 class_confidence = prediction["confidence"]
                 st.write(
-                    f"**Class:** {class_name} - Confidence: {class_confidence*100:.2f}%"
+                    f"**Kelas:** {class_name} - Kepercayaan: {class_confidence*100:.2f}%"
                 )
 
-            # Add a confidence bar for the top prediction
-            st.write("### Confidence Visualization:")
+            # Tambahkan bar visualisasi kepercayaan untuk prediksi teratas
+            st.write("### Visualisasi Kepercayaan:")
             st.progress(int(confidence * 100))
         else:
-            st.write("No result from the model.")
+            st.write("Tidak ada hasil dari model.")
 
-# Custom styles for mobile-friendliness
+# Gaya kustom untuk kenyamanan di perangkat mobile dan padding
 hide_streamlit_style = """
                 <style>
+                body {
+                    padding: 25px;
+                    font-family: 'Arial', sans-serif;
+                    background-color: #f4f4f9;
+                    color: #333;
+                }
                 div[data-testid="stToolbar"] {
-                visibility: hidden;
-                height: 0%;
-                position: fixed;
+                    visibility: hidden;
+                    height: 0%;
+                    position: fixed;
                 }
                 div[data-testid="stDecoration"] {
-                visibility: hidden;
-                height: 0%;
-                position: fixed;
+                    visibility: hidden;
+                    height: 0%;
+                    position: fixed;
                 }
                 div[data-testid="stStatusWidget"] {
-                visibility: hidden;
-                height: 0%;
-                position: fixed;
+                    visibility: hidden;
+                    height: 0%;
+                    position: fixed;
                 }
                 #MainMenu {
-                visibility: hidden;
-                height: 0%;
+                    visibility: hidden;
+                    height: 0%;
                 }
                 header {
-                visibility: hidden;
-                height: 0%;
-                position: fixed;
+                    visibility: hidden;
+                    height: 0%;
+                    position: fixed;
                 }
                 footer {
-                visibility: hidden;
-                height: 0%;
-                position: fixed;
+                    visibility: hidden;
+                    height: 0%;
+                    position: fixed;
+                }
+                .css-1v3fvcr {
+                    margin-top: 16px;
+                }
+                .stButton>button {
+                    background-color: #4CAF50;
+                    color: white;
+                    font-weight: bold;
+                    border-radius: 8px;
+                    padding: 10px;
+                    width: 100%;
+                }
+                .stButton>button:hover {
+                    background-color: #45a049;
                 }
                 </style>
                 """
