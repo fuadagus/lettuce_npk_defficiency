@@ -13,29 +13,28 @@ CLIENT = InferenceHTTPClient(
 st.markdown(
     """
     <h3 style='text-align: center; font-size: 18px; margin-top: 0;'>
-        🌱 Lettuce Health Classification 🌱
+        Cek Nutrisi Selada
     </h3>
     """,
     unsafe_allow_html=True
 )
 
-# Instructions
+# Instructions (left aligned)
 st.write(
-    "<p style='text-align: center; font-size: 14px;'>📸 Upload an image or use your camera to classify the lettuce's health.</p>",
+    "<p style='text-align: left; font-size: 14px;'>📸 Upload gambar untuk cek kesehatan selada</p>",
+    unsafe_allow_html=True
+)
+st.write(
+    "<p style='text-align: left; font-size: 14px;'>✅ Pastikan hanya satu selada dalam satu frame gambar</p>",
     unsafe_allow_html=True
 )
 
-# Image input options: Upload or Camera
+# Image input: Upload
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
-camera_image = st.camera_input("Take a photo")
 
-if uploaded_file or camera_image:
-    # Process the uploaded file or camera input
-    if uploaded_file:
-        image = Image.open(uploaded_file)
-    else:
-        # Convert camera image bytes to a PIL Image
-        image = Image.open(camera_image)
+if uploaded_file:
+    # Process the uploaded file
+    image = Image.open(uploaded_file)
 
     # Display the image
     st.image(image, caption="Selected Image", use_container_width=True)
@@ -79,12 +78,37 @@ if uploaded_file or camera_image:
             st.write("No result from the model.")
 
 # Custom styles for mobile-friendliness
-hide_st_style = """
-    <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    img {max-width: 100%; height: auto;}
-    </style>
-"""
-st.markdown(hide_st_style, unsafe_allow_html=True)
+hide_streamlit_style = """
+                <style>
+                div[data-testid="stToolbar"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                div[data-testid="stDecoration"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                div[data-testid="stStatusWidget"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                #MainMenu {
+                visibility: hidden;
+                height: 0%;
+                }
+                header {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                footer {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                </style>
+                """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
